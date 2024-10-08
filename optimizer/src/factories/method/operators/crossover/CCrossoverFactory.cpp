@@ -2,9 +2,11 @@
 #include <regex>
 #include <cstring>
 #include "CCrossoverFactory.h"
+
 #include "method/operators/crossover/crossovers/CUniformCX.h"
 #include "method/operators/crossover/crossovers/CTTP_OS_SX.h"
 #include "method/operators/crossover/crossovers/CCVRP_OX.h"
+#include "../../../../method/operators/crossover/crossovers/CBinomialCX.h"
 #include "utils/fileReader/CReadUtils.h"
 
 ACrossover *CCrossoverFactory::Create(SConfigMap *configMap, const std::string& configKey, AProblem& problem)
@@ -22,18 +24,23 @@ ACrossover *CCrossoverFactory::Create(SConfigMap *configMap, const std::string& 
     if (strcmp(opName, "UniformCX" ) == 0 && (encodingTypes.find(EEncodingType::ASSOCIATION) != encodingTypes.end() || encodingTypes.find(EEncodingType::PERMUTATION) != encodingTypes.end()))
     {
         float cxProb = std::stof(vec[1]);
-        return new CUniformCX(cxProb);
+        return new CUniformCX("UniformCX", cxProb);
     }
     else if (strcmp(opName, "TTP_OX_SX") == 0 && encodingTypes.find(EEncodingType::PERMUTATION) != encodingTypes.end())
     {
         float routeCrProb = std::stof(vec[1]);
         float knapCrProb = std::stof(vec[2]);
-        return new CTTP_OS_SX(routeCrProb, knapCrProb);
+        return new CTTP_OS_SX("TTP_OX_SX", routeCrProb, knapCrProb);
     }
     else if (strcmp(opName, "CVRP_OX") == 0 && encodingTypes.find(EEncodingType::PERMUTATION) != encodingTypes.end())
     {
         float oxProb = std::stof(vec[1]);
-        return new CCVRP_OX(oxProb);
+        return new CCVRP_OX("CVRP_OX", oxProb);
+    }
+    else if (strcmp(opName, "BinomialCX") == 0 && encodingTypes.find(EEncodingType::ASSOCIATION) != encodingTypes.end())
+    {
+        float cxRate = std::stof(vec[1]);
+        return new CBinomialCX("BinomialCX", cxRate);
     }
 
     return nullptr;

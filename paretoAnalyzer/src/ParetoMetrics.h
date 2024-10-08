@@ -22,6 +22,7 @@ struct ParetoMetrics
 	void SetMetric(const std::string& metricName, float metricValue);
 	const ParetoMetric* GetMetric(const std::string& metricName) const;
 	std::string ToString() const;
+	std::string ToPrettyString() const;
 	static ParetoMetrics GetAverageMetrics(const std::vector<ParetoMetrics>& paretoMetricsToAverage);
 };
 
@@ -38,4 +39,6 @@ private:
 	float CalcGenerationalDistance(const ParetoFront& referenceParetoFront, const ParetoFront& paretoFrontToEvaluate) const;
 	float CalcGenerationalDistancePlus(const ParetoFront& referenceParetoFront, const ParetoFront& paretoFrontToEvaluate) const;
 	float CalcGenerationalDistanceNonEuclidean(const ParetoFront& referenceParetoFront, const ParetoFront& paretoFrontToEvaluate) const;
+
+	// float CalcS(const ParetoFront& paretoFrontToEvaluate) const;
 };

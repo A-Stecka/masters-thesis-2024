@@ -15,7 +15,7 @@ private:
         SSolution(size_t i);
 
         size_t m_Idx;
-        std::vector<SSolution *> m_DominatedSolutions;
-        size_t m_DominationCounter;
+        std::vector<SSolution *> m_DominatedSolutions; // Pointers to individuals dominated by solution
+        size_t m_DominationCounter; // Number of individuals that dominate solution
     };
 };

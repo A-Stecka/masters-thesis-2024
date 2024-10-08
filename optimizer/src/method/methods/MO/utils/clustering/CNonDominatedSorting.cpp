@@ -13,6 +13,7 @@ void CNonDominatedSorting::Cluster(std::vector<SMOIndividual *> &population, std
     // clusters == fronts
     clusters.push_back(std::vector<size_t>());
 
+    // Domination relation between every pair of individuals in population is considered
     for (size_t p = 0; p < popSize; ++p)
     {
         for (size_t q = 0; q < popSize; ++q)
@@ -29,6 +30,7 @@ void CNonDominatedSorting::Cluster(std::vector<SMOIndividual *> &population, std
                 }
             }
         }
+        // Nondominated individuals are selected as the first front / cluster
         if (solutions[p].m_DominationCounter == 0)
         {
             clusters[0].push_back(p);
@@ -36,11 +38,13 @@ void CNonDominatedSorting::Cluster(std::vector<SMOIndividual *> &population, std
     }
 
     size_t rank = 1;
+    // If there are no nondominated individuals then there are no fronts / clusters and all individuals have the same rank
     while (!clusters[rank - 1].empty())
     {
         clusters.push_back(std::vector<size_t>());
         for (size_t solutionIdx: clusters[rank - 1])
         {
+            // Individuals from the previous front / cluster are removed and new nondominated individuals are selected as the next front / cluster
             for (SSolution *dominatedSolution: solutions[solutionIdx].m_DominatedSolutions)
             {
                 dominatedSolution->m_DominationCounter -= 1;

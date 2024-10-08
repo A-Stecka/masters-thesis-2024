@@ -19,6 +19,11 @@ void CScheduler::SetResources(const std::vector<CResource> &resources)
     m_Resources = resources;
 }
 
+void CScheduler::InitUnassignedTasks()
+{
+    m_UnassignedTasksIndexes = std::vector<std::vector<size_t>>(m_Tasks.size());
+}
+
 const CTask* CScheduler::GetTaskById(TTaskID taskId) const
 {
     return taskId <= m_Tasks.size() ? &m_Tasks[taskId - 1] : nullptr;
@@ -97,7 +102,6 @@ void CScheduler::AssignTask(size_t taskIndex)
                 AssignTask(predecessorId - 1);
             }
         }
-
         BuildTimestampForTask_TO(taskIndex);
     }
 }
@@ -126,6 +130,55 @@ void CScheduler::BuildTimestampForTask_TO(size_t taskIndex)
     resource.AddWorkingTime(task.GetDuration());
 }
 
+void CScheduler::BuildTimestamps_CC(std::vector<float>& genotype)
+{
+    std::vector<size_t> tasksIndexes = GetTasksIndexes(genotype, genotype.size() / 2);
+
+    // Reset resource availability - SetWorkingTime removed because we consider only two dimensions (cost and duration)
+    for (CResource& resource : m_Resources)
+    {
+        resource.SetFinish(-1);
+    }
+
+    // Reset tasks start
+    for (CTask& task : m_Tasks)
+    {
+        task.SetStart(-1);
+    }
+
+    // Assign start times based on task priority and precedence relations
+    for (size_t i = 0; i < m_Tasks.size(); ++i)
+    {
+        AssignTask_CC(tasksIndexes[i]);
+    }
+}
+
+void CScheduler::AssignTask_CC(size_t taskIndex)
+{
+    if (m_Tasks[taskIndex].GetStart() == -1)
+    {
+        for (TTaskID predecessorId : m_Tasks[taskIndex].GetPredecessors())
+        {
+            if (m_Tasks[predecessorId - 1].GetResourceID() == -1)
+            {
+                AssignTask_CC(predecessorId - 1);
+            }
+        }
+        BuildTimestampForTask_CC(taskIndex);
+    }
+}
+
+void CScheduler::BuildTimestampForTask_CC(size_t taskIndex)
+{
+    CTask& task = m_Tasks[taskIndex];
+
+    CResource &resource = m_Resources[(size_t) task.GetResourceID() - 1];
+    TTime start = std::max(GetEarliestTime(task), resource.GetFinish());
+    task.SetStart(start);
+    resource.SetFinish(start + task.GetDuration());
+    resource.AddWorkingTime(task.GetDuration()); // AddWorkingTime not necessary because by default we consider only two dimensions (cost and duration)
+}
+
 TResourceID CScheduler::GetBestCapableResourceId(size_t taskIndex, TTime earliestTime)
 {
     CTask& task = m_Tasks[taskIndex];
@@ -148,13 +201,13 @@ TResourceID CScheduler::GetBestCapableResourceId(size_t taskIndex, TTime earlies
     return bestCapableResourceId;
 }
 
-std::vector<size_t> CScheduler::GetTasksIndexes(std::vector<float>& priorities)
+std::vector<size_t> CScheduler::GetTasksIndexes(std::vector<float>& priorities, size_t sectionSize)
 {
-    std::vector<size_t> tasksIndexes(priorities.size());
+    std::vector<size_t> tasksIndexes(sectionSize);
     std::iota(tasksIndexes.begin(), tasksIndexes.end(), 0);
 
     std::stable_sort(tasksIndexes.begin(), tasksIndexes.end(),
-        [&priorities](size_t i1, size_t i2) {return priorities[i1] > priorities[i2]; });
+        [&priorities] (size_t i1, size_t i2) {return priorities[i1] > priorities[i2]; });
 
     return tasksIndexes;
 }

@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 
     std::random_device rd;
     programParams.m_Seed = (argc > SEED_INDEX) ? std::stoi(argv[SEED_INDEX]) : rd();
-    
+
     CProgram::Run(programParams);
 
     return 0;

@@ -6,7 +6,6 @@
 #include "../../individual/SGenotype.h"
 #include "../../individual/SO/SSOIndividual.h"
 #include "../../individual/SO/SParticle.h"
-#include "../../../problem/problems/ECVRPTW/CECVRPTW.h"
 
 class AInitialization
 {
@@ -18,4 +17,5 @@ public:
     virtual SMOIndividual* CreateMOIndividual(SProblemEncoding &encoding) = 0;
     virtual SSOIndividual* CreateNeighborSolution(SProblemEncoding &encoding, const SSOIndividual &baseSolution) = 0;
     virtual SParticle* CreateParticle(SProblemEncoding &encoding) = 0;
+    virtual SMOIndividual* CreateCCoDEIndividual(SProblemEncoding &encoding, EPopulationType populationType) = 0;
 };

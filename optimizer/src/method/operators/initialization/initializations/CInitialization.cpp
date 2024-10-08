@@ -79,6 +79,16 @@ SSOIndividual* CInitialization::CreateNeighborSolution(SProblemEncoding &encodin
     return newSolution;
 }
 
+SMOIndividual* CInitialization::CreateCCoDEIndividual(SProblemEncoding &encoding, EPopulationType populationType)
+{
+    SGenotype genotype;
+    InitGenotype(encoding, genotype);
+    std::vector<float> emptyEvaluation(encoding.m_objectivesNumber, 0);
+    std::vector<float> emptyNormalizedEvaluation(encoding.m_objectivesNumber, 0);
+
+    return new SMOIndividual(genotype, emptyEvaluation, emptyNormalizedEvaluation, populationType);
+}
+
 void CInitialization::InitGenotype(SProblemEncoding &encoding, SGenotype &genotype) const
 {
     for (const SEncodingSection &encodingSection: encoding.m_Encoding)

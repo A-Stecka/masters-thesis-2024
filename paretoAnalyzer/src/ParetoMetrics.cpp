@@ -49,8 +49,26 @@ std::string ParetoMetrics::ToString() const
 	for (const ParetoMetric& paretoMetric : metrics)
 	{
 		char buff[100];
-		snprintf(buff, sizeof(buff), "%s:%.5f;", paretoMetric.metricName.c_str(), paretoMetric.metricValue);
+		snprintf(buff, sizeof(buff), "%.5f;", paretoMetric.metricValue);
 		toString.append(buff);
+	}
+	return toString;
+}
+
+std::string ParetoMetrics::ToPrettyString() const
+{
+	std::string toString = "";
+	int i = 0;
+	for (const ParetoMetric& paretoMetric : metrics)
+	{
+		if (i % 2 == 0)
+		{
+			toString.append("\n\t");
+		}
+		char buff[100];
+		snprintf(buff, sizeof(buff), "%s: %.5f; ", paretoMetric.metricName.c_str(), paretoMetric.metricValue);
+		toString.append(buff);
+		i++;
 	}
 	return toString;
 }
@@ -62,6 +80,9 @@ ParetoMetrics ParetoMetrics::GetAverageMetrics(const std::vector<ParetoMetrics>&
 	//std::vector<std::string> metricsToAvg{"GD", "IGD", "PFS"};
 	//std::vector<std::string> metricsToAvg{"GD", "IGD", "PFS", "ND", "ND/TPFS"};
 	std::vector<std::string> metricsToAvg{"HV", "GD", "IGD", "PFS", "ND", "ND/TPFS"};
+
+	// std::vector<std::string> metricsToAvg{"HV", "GD", "IGD", "PFS", "ND", "ND/TPFS", "S"};
+
 	std::string stdPrefix("_std");
 
 	for (const std::string& metricName : metricsToAvg)
@@ -110,6 +131,9 @@ ParetoMetrics ParetoMatricsEvaluator::EvaluateParetoFront(const ParetoFront& Par
 	float nonDominated = (float)ParetoToEvaluate.GetNumberOfNonDominatedBy(TruePareto);
 	paretoMetrics.SetMetric("ND", nonDominated);
 	paretoMetrics.SetMetric("ND/TPFS", nonDominated / (float)TruePareto.solutions.size());
+
+	// paretoMetrics.SetMetric("S", CalcS(ParetoToEvaluate));
+
 	//paretoMetrics.SetMetric("IGD+", CalcGenerationalDistancePlus(TruePareto, ParetoToEvaluate));
 
 	// TO-DO evaluate other metrics

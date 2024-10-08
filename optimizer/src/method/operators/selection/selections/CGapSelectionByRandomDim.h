@@ -12,9 +12,19 @@ public:
     ~CGapSelectionByRandomDim() override = default;
 
     std::vector<std::pair<SMOIndividual*, SMOIndividual*>> Select(std::vector<SMOIndividual*>& parents, int objectiveNumber, int populationSize);
+    // Added for CCoDE
+    std::vector<SMOIndividual*> SelectForCoevolution(
+        std::vector<SMOIndividual*>& archive,
+        int objectiveNumber,
+        int individualsCount,
+        bool individualFitness = false);
 private:
     bool m_BNTGA;
 
-    std::vector<float> CalculateGapValues(std::vector<SMOIndividual*>& parents, int objectiveNumber) const;
-    size_t SelectParentIdxByTournament(const std::vector<SMOIndividual*>& parents, const std::vector<float>& gapValues) const;
+    std::vector<float> CalculateGapValues(
+        std::vector<SMOIndividual*>& individuals,
+        int objectiveNumber,
+        bool individualFitness = false) const;
+
+    size_t SelectParentIdxByTournament(const std::vector<SMOIndividual*>& individuals, const std::vector<float>& gapValues) const;
 };

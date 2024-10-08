@@ -9,6 +9,7 @@ class CMethodFactory
 public:
     static AMethod *CreateMethod(
             const char *optimizerConfigPath,
+            const char *problemName,
             AProblem &problem
     );
     static void DeleteObjects();

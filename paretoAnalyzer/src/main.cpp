@@ -6,6 +6,16 @@
 #include <fstream>
 #include <filesystem>
 #include <cmath>
+#include <cstring>
+
+void WriteMetricsToCSV(const std::string& metrics, const std::string& directoryPath) {
+    const std::filesystem::path resultsPath = std::filesystem::path(directoryPath) / "metrics/metrics.csv";
+    std::ofstream writeFileStream(resultsPath, std::ios_base::app);
+
+    writeFileStream << metrics;
+
+    writeFileStream.close();
+}
 
 int main(int argc, char* argv[]) {
     std::vector<ConfigData*> configsToAnalyze;
@@ -130,7 +140,13 @@ int main(int argc, char* argv[]) {
             size_t runsCount = config->configResults.GetParetoCountForInstance(instanceName);
             size_t mergedSize = config->configMergedPareto.solutions.size();
             size_t mergedNonDominated = config->configMergedPareto.GetNumberOfNonDominatedBy(trueParetoFront);
-            std::cout << config->configName << ";runs:" << runsCount << ";MPFS:" << mergedSize << ";MND:" << mergedNonDominated << ";" << avgParetoMetrics.ToString() << std::endl;
+
+            std::cout << config->configName << "; runs: " << runsCount << std::endl << "\tMPFS: " << mergedSize
+                << "; MND: " << mergedNonDominated << ";" << avgParetoMetrics.ToPrettyString() << std::endl << std::endl;
+
+            WriteMetricsToCSV(config->configName + ";" + std::to_string(runsCount) + ";" + std::to_string(mergedSize)
+                + ";" + std::to_string(mergedNonDominated) + ";" + avgParetoMetrics.ToString() + "\n",
+                outputDir);
         }
     }
 	return 0;

@@ -38,6 +38,7 @@ public:
     TTime GetExpectedFinish() const
     { return m_Start + m_Duration; }
 
+    // Returns false if task cannot be executed by resource - resource does not have required skills
     bool CanBeExecutedBy(const CResource &resource) const;
 
     const std::vector<SSkill> &GetRequiredSkills() const

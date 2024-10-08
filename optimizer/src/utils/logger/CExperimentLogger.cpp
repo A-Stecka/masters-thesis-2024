@@ -10,7 +10,6 @@
 char* CExperimentLogger::m_OutputDirPath = nullptr;
 std::vector<std::string> CExperimentLogger::m_Data;
 std::string CExperimentLogger::m_OutputDataPathPrefix;
-int CExperimentLogger::m_LastProgressLogged;
 size_t CExperimentLogger::m_BufferSize = 10000;
 
 void CExperimentLogger::CreateOutputDataPrefix() {
@@ -78,14 +77,6 @@ void CExperimentLogger::LogResult(const char* result, const char* fileName)
     outFile.close();
 }
 
-void CExperimentLogger::LogProgress(const float progress)
-{
-    if (m_LastProgressLogged != (int)(progress * 100)) {
-        std::cout << (int)(progress * 100) << std::endl;
-        m_LastProgressLogged = (int)(progress * 100);
-    }
-}
-
 void CExperimentLogger::OpenFileForWriting(const char* filePath, std::ofstream& outFile)
 {
     std::ifstream inFile(filePath);
@@ -101,7 +92,7 @@ bool CExperimentLogger::WriteSchedulerToFile(const CScheduler& schedule, const A
     // TODO - generic logger should not contain Scheduler logic
     char archive_filename[256];
     std::string outputDataPath = m_OutputDataPathPrefix + "/best_solution.sol";
-    snprintf(archive_filename, 256, "%s",outputDataPath.c_str());
+    snprintf(archive_filename, 256, outputDataPath.c_str());
     std::ofstream arch_file(archive_filename);
 
     arch_file << "Instance name;Duration;Cost;AvgCashFlowDev;AvgSkillOverUse;AvgUseOfResTime " << std::endl;
@@ -114,7 +105,7 @@ bool CExperimentLogger::WriteSchedulerToFile(const CScheduler& schedule, const A
     for (CTask task : schedule.GetTasks())
     {
         int startTime = task.GetStart();
-        if (!std::count(startTimes.begin(), startTimes.end(), startTime))
+        if (!std::count(startTimes.begin(), startTimes.end(), startTime)) // Adds start times not yet in vector
             startTimes.push_back(startTime);
     }
 
@@ -129,7 +120,7 @@ bool CExperimentLogger::WriteSchedulerToFile(const CScheduler& schedule, const A
 
         for (CTask task : schedule.GetTasks())
         {
-            if (task.GetStart() == startTime)
+            if (task.GetStart() == startTime) // Prints all tasks starting at specified start time
             {
                 TResourceID resourceID = task.GetResourceID();
                 TTime duration = task.GetDuration();

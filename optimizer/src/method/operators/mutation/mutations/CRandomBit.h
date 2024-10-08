@@ -6,11 +6,14 @@
 class CRandomBit : public AMutation
 {
 public:
-    explicit CRandomBit(float mutationProbability) : m_MutationProbability(mutationProbability)
+    explicit CRandomBit(const char *name, float mutationProbability) : AMutation(name),
+                                                                       m_MutationProbability(mutationProbability)
     {};
+
     ~CRandomBit() override = default;
 
-    void Mutate(SProblemEncoding& problemEncoding, AIndividual &child) override;
+    void Mutate(SProblemEncoding &problemEncoding, AIndividual &child) override;
+
 private:
     float m_MutationProbability;
 };

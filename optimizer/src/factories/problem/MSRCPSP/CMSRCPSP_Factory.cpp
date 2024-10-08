@@ -1,6 +1,6 @@
-
-#include "utils/fileReader/CReadUtils.h"
 #include <fstream>
+#include "problem/EEvalMode.h"
+#include "utils/fileReader/CReadUtils.h"
 #include "CMSRCPSP_Factory.h"
 
 const std::string CMSRCPSP_Factory::s_Delimiter = " ";
@@ -10,6 +10,13 @@ const std::string CMSRCPSP_Factory::s_ResourcesSectionKey = "ResourceID";
 const std::string CMSRCPSP_Factory::s_TasksSectionKey = "TaskID";
 
 CScheduler *CMSRCPSP_Factory::scheduler = nullptr;
+
+CMSRCPSP_CC *CMSRCPSP_Factory::CreateMSRCPSP_CC(const char *problemConfigurationPath, EEvalMode evalMode)
+{
+    scheduler = CreateScheduler(problemConfigurationPath);
+
+    return new CMSRCPSP_CC(*scheduler, evalMode);
+}
 
 CMSRCPSP_TA *CMSRCPSP_Factory::CreateMSRCPSP_TA(const char *problemConfigurationPath, size_t objCount)
 {

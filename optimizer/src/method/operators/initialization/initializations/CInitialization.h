@@ -13,6 +13,7 @@ public:
     SMOIndividual* CreateMOIndividual(SProblemEncoding &encoding) override;
     SSOIndividual* CreateNeighborSolution(SProblemEncoding &encoding, const SSOIndividual &baseSolution) override;
     SParticle* CreateParticle(SProblemEncoding &encoding) override;
+    SMOIndividual* CreateCCoDEIndividual(SProblemEncoding &encoding, EPopulationType populationType) override;
 private:
     void InitGenotype(SProblemEncoding &encoding, SGenotype &genotype) const;
 };

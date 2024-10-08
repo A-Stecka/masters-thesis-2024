@@ -23,6 +23,7 @@ void CProgram::Run(const SProgramParams &programParams)
     // Create a method instance using the factory pattern and the created problem
     AMethod *method = CMethodFactory::CreateMethod(
             programParams.m_MethodConfigPath,
+            programParams.m_ProblemName,
             *problem
     );
 
@@ -32,7 +33,7 @@ void CProgram::Run(const SProgramParams &programParams)
     // Loop through the number of executions specified in the program parameters
     for (int i = 0; i < programParams.m_ExecutionsCount; i++, AMethod::m_ExperimentRunCounter++)
     {
-        CRandom::SetSeed(programParams.m_Seed+i);
+        CRandom::SetSeed(programParams.m_Seed + i);
 
         // Create a prefix for output data paths for each experiment run
         CExperimentLogger::CreateOutputDataPrefix();

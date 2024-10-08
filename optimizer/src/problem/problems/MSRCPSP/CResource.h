@@ -38,16 +38,16 @@ public:
     const std::vector<SSkill> &GetSkills() const
     { return m_Skills; }
 
-    // Returns if resource skill at this or higher level
+    // Returns true if resource has skill at specified or higher level
     bool HasSkill(const SSkill &querySkill) const;
 
-    // Returns false if skill is not available
+    // Returns false if resource does not have skill
     bool GetSkillLevel(TSkillType skillType, TSkillLevel &skillLevel) const;
 
 private:
     TResourceID m_ID;
     float m_Salary;
-    std::vector<SSkill> m_Skills;
+    std::vector<SSkill> m_Skills; // Only one entry per skill type - skill is known at only one level
     TTime m_Finish;
-    TTime m_WorkingTime;
+    TTime m_WorkingTime; // Used for AvgUseOfResources objective
 };
